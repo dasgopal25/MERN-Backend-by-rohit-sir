@@ -1,0 +1,7 @@
+V8 Engine:- It is just a c++ code which can understand your js code.
+
+V8 can be embedded into any c++ application.
+
+IIFE = An IIFE (Immediately Invoked Function Expression) is an idiom in which a JavaScript function runs as soon as it is defined.
+
+module.exports is a empty object. {}:-console.log(module.exports); 

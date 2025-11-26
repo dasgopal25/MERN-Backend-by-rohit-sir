@@ -1,0 +1,3 @@
+JS:- It is a single threaded synchonous language
+
+Process:- Threaded, Multthreaded, asynchrnous, single core, octal core,parallelism, concurrent

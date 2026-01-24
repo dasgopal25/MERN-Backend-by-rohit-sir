@@ -1,0 +1,5 @@
+postman...
+day 7....////12/01/2026
+
+//parsing karni hoti hai
+ app.use(express.json());

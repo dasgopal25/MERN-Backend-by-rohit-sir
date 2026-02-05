@@ -4,7 +4,7 @@ const {Schema} = mongoose;
 const userSchema = new Schema({
     firstName:{
         type:String,
-        minLength:3,eunm:["male","Male","female","Female","others","Others"],
+        minLength:3,
         maxLength:20,
         required:true,
     },

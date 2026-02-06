@@ -2,6 +2,8 @@ const User = require("../model/user_model");
 const {registerV,loginV} = require("../middleware/user_middle");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const RedisClient = require("../util/redis")
+
 
 const registPost = async (req, res) => {
   try {
@@ -19,7 +21,6 @@ const registPost = async (req, res) => {
   }
 };
 
-
 const loginPost = async (req,res) =>{
   try{
    loginV(req.body);
@@ -31,10 +32,8 @@ const loginPost = async (req,res) =>{
       if(!IsAllow){
           throw new Error("User not found");
       }
-     const token = jwt.sign({email:req.body.email},process.env.SECRET_CODE);
-         res.cookie("token", token, {
-  expires: new Date(Date.now() + 3*24*60*60*1000)
-});
+     const token = jwt.sign({email:req.body.email},process.env.SECRET_CODE,{ expiresIn: "1m" });
+     res.cookie("token", token, {expires: new Date(Date.now() + 60000)});
           res.status(200).send("Login done");
   }
   catch(err){
@@ -45,12 +44,16 @@ const loginPost = async (req,res) =>{
 
 const logoutPost = async (req,res) =>{
   try {
+    const {token} = req.cookies;
+    const payload = jwt.decode(token);
 
-    res.clearCookie("token", {
-    httpOnly: true,
-    secure: true,   // production
-    sameSite: "strict"
-  });
+    const IsBlocked =  await RedisClient.exists(`token:${token}`);
+    if(IsBlocked) throw new Error("Error: invalid cookies");
+   
+    await RedisClient.set(`token:${token}`,"Blocked");
+    await RedisClient.expireAt(`token:${token}`,payload.exp);
+
+    res.cookie("token",null,{expires:new Date(Date.now())});
 
   res.status(200).send("Logout done");
   } catch (error) {
@@ -60,6 +63,9 @@ const logoutPost = async (req,res) =>{
 
 const profileGet = async (req,res) =>{
   try {
+    const {token} = req.cookies;
+    const IsBlocked =  await RedisClient.exists(`token:${token}`);
+    if(IsBlocked) throw new Error("Error: invalid cookies");
       const payload = jwt.verify(req.cookies.token,process.env.SECRET_CODE);
   
       const userInfo = await User.findOne({email:payload.email});
@@ -75,6 +81,9 @@ const profileGet = async (req,res) =>{
 
 const userDelete = async(req,res)=>{
   try{
+    const {token} = req.cookies;
+    const IsBlocked =  await RedisClient.exists(`token:${token}`);
+    if(IsBlocked) throw new Error("Error: invalid cookies");
      const payload = jwt.verify(req.cookies.token,process.env.SECRET_CODE);
   await User.deleteOne({email:payload.email});
   res.status(200).send("User has been deleted done!");
@@ -86,6 +95,9 @@ const userDelete = async(req,res)=>{
 
 const userUpdate = async (req,res)=>{
   try{
+    const {token} = req.cookies;
+    const IsBlocked =  await RedisClient.exists(`token:${token}`);
+    if(IsBlocked) throw new Error("Error: invalid cookies");
     const payload = jwt.verify(req.cookies.token,process.env.SECRET_CODE);
     const user = await User.findOne({email:payload.email});
     

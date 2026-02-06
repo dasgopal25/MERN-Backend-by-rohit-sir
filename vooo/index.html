@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Valentine</title>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="hearts"></div>
+
+  <div class="container">
+
+    <!-- NAME PAGE -->
+    <div class="card" id="namePage">
+      <h1>Enter Your Crush Name 💖</h1>
+      <p class="subtext">Let's make it personal 😏</p>
+
+      <input type="text" id="nameInput" placeholder="Enter name..." />
+
+      <button class="yes-btn" id="startBtn">Start 💌</button>
+
+      <p class="bottom-text">Your name will be used in the next page 😁</p>
+    </div>
+
+
+    <!-- Page 1 -->
+    <div class="card hidden" id="page1">
+      <h1>Will you be my valentine? 💝</h1>
+      <p class="subtext">Choose wisely... 😏</p>
+
+      <button class="yes-btn" id="yesBtn">YES! 💞 (Getting warmer...)</button>
+
+      <button class="no-btn" id="noBtn">NO</button>
+
+      <p class="bottom-text">
+        You're persistent, I'll give you that! But the answer is YES! 😘
+      </p>
+    </div>
+
+
+    <!-- Page 2 -->
+    <div class="card hidden" id="page2">
+      <h1>I knew it! 🎉</h1>
+
+      <div class="gif-box">
+        <img src="https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif" alt="celebrate">
+      </div>
+
+      <p class="success-text">
+        Congratulations! You are now officially <br />
+        <b><span id="crushName">Daljit</span>’s Valentine ❤️</b><br />
+        forever and always! 🥰
+      </p>
+
+      <p class="small-text">(I mean, we both knew you'd say yes eventually 😌)</p>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

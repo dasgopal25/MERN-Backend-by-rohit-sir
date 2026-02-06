@@ -1,0 +1,339 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error Unlimited</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #111b21;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .chat-container {
+      width: 420px;
+      height: 650px;
+      background: #0b141a;
+      border-radius: 15px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .chat-header {
+      background: #202c33;
+      padding: 15px;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .chat-body {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background: #111b21;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      font-size: 15px;
+      line-height: 1.4;
+      white-space: pre-line;
+      word-wrap: break-word;
+    }
+
+    .you {
+      background: #005c4b;
+      color: white;
+      margin-left: auto;
+      border-bottom-right-radius: 2px;
+      text-align: left;
+    }
+
+    .friend {
+      background: #202c33;
+      color: white;
+      margin-right: auto;
+      border-bottom-left-radius: 2px;
+      text-align: left;
+    }
+
+    .sender {
+      font-size: 12px;
+      font-weight: bold;
+      opacity: 0.8;
+      margin-bottom: 5px;
+    }
+
+    .separator {
+      width: 100%;
+      height: 6px;
+      background-color: rgba(0, 255, 100, 0.3);
+      border-radius: 20px;
+      margin: 10px 0;
+    }
+
+    .chat-footer {
+      display: flex;
+      gap: 10px;
+      padding: 12px;
+      background: #202c33;
+    }
+
+    .chat-footer input {
+      flex: 1;
+      padding: 12px;
+      border-radius: 20px;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      background: #111b21;
+      color: white;
+    }
+
+    .chat-footer button {
+      padding: 10px 18px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      background: #00a884;
+      color: black;
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    .chat-footer button:hover {
+      background: #00c896;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="chat-container">
+    <div class="chat-header">
+     Error Unlimited
+    </div>
+
+    <div id="messageDisplay" class="chat-body"></div>
+
+    <div class="chat-footer">
+      <input type="text" id="message" placeholder="Type a message...">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const messageBox = document.getElementById("messageDisplay");
+    const messageInput = document.getElementById("message");
+
+    function addSeparator() {
+      const separator = document.createElement("div");
+      separator.className = "separator";
+      messageBox.appendChild(separator);
+    }
+
+    function sendMessage() {
+      const msg = messageInput.value.trim();
+      if (!msg) return;
+
+      socket.emit("message", msg);
+
+      const element = document.createElement("div");
+      element.className = "message you";
+
+      element.innerHTML = `<div class="sender">You</div>${msg}`;
+
+      messageBox.appendChild(element);
+      addSeparator();
+
+      messageBox.scrollTop = messageBox.scrollHeight;
+      messageInput.value = "";
+    }
+
+    socket.on("new-message", (data) => {
+      const element = document.createElement("div");
+      element.className = "message friend";
+
+      element.innerHTML = `<div class="sender">Friend</div>${data}`;
+
+      messageBox.appendChild(element);
+      addSeparator();
+
+      messageBox.scrollTop = messageBox.scrollHeight;
+    });
+
+    // Enter press send
+    messageInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        sendMessage();
+      }
+    });
+  </script>
+
+</body>
+
+</html> -->
+
+<!--<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Socket</title>
+</head>
+<body>
+    <div>
+        <h1>Chat App</h1>
+        <input type="text" name="" id="roomNumber" placeholder="Create a room ID">
+        <button onclick="joinRoom()">Join</button>
+        <div style="width: 50vw; height: 50vh; background-color: blueviolet; color: black; margin-bottom: 20px; padding: 20px; margin-top: 10px;" id="messageDisplay"></div>
+        <input type="text" placeholder="Write to your sms" id="message" style="width: 30vw; height: 10vh;" id="message">
+        <button style="width: 150px; height: 50px; border-radius: 10px;background-color: rgb(60, 157, 50); color: rgb(0, 0, 0);font-size: large;" onclick="sendMessage()">Send</button>
+    </div>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+  const messageBox = document.getElementById('messageDisplay');
+  const messageInput = document.getElementById('message');
+  const roomNumber = document.getElementById('roomNumber');
+  let roomId = null;
+
+  function sendMessage(){
+    const msg = messageInput.value;
+    socket.emit('message',msg);
+     const element = document.createElement('div');
+   element.textContent = `you:\n${msg.trim()}`;
+
+element.style.whiteSpace = "pre-line";
+    element.style.textAlign= "right";
+    messageBox.appendChild(element);
+    messageInput.value =''
+  }
+function sendMessage(){
+    const msg = messageInput.value;
+    socket.emit('message',{room:roomId,msg});
+     const element = document.createElement('div');
+   element.textContent = `you:\n${msg.trim()}`;
+
+element.style.whiteSpace = "pre-line";
+    element.style.textAlign= "right";
+    messageBox.appendChild(element);
+    messageInput.value =''
+  }
+
+  function joinRoom(){
+    const room = roomNumber.value;
+    roomId = room;
+    socket.emit('join-room',room);
+  }
+
+  socket.on('new-message',(data)=>{
+    const element = document.createElement('div');
+    element.textContent = data;
+    messageBox.appendChild(element);
+  });
+
+  socket.on('connect',()=>{
+    console.log(socket.id);
+  })
+</script>
+
+</body>
+</html>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Room Chat App</title>
+</head>
+
+<body>
+  <h1>Chat App</h1>
+
+  <input type="text" id="roomNumber" placeholder="Enter room ID">
+  <button onclick="joinRoom()">Join</button>
+
+  <h3 id="roomStatus">Not Joined</h3>
+
+  <div style="width: 50vw; height: 50vh; background-color: blueviolet; color: black; margin-bottom: 20px; padding: 20px; margin-top: 10px; overflow-y:auto;"
+    id="messageDisplay"></div>
+
+  <input type="text" placeholder="Write message" id="message" style="width: 30vw; height: 10vh;">
+  <button style="width: 150px; height: 50px; border-radius: 10px;background-color: rgb(60, 157, 50); color: rgb(0, 0, 0);font-size: large;"
+    onclick="sendMessage()">Send</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+
+  <script>
+    const socket = io();
+
+    const messageBox = document.getElementById("messageDisplay");
+    const messageInput = document.getElementById("message");
+    const roomNumber = document.getElementById("roomNumber");
+    const roomStatus = document.getElementById("roomStatus");
+
+    let roomId = null;
+
+    function joinRoom() {
+      const room = roomNumber.value.trim();
+      if (!room) return alert("Enter room ID");
+
+      roomId = room;
+      socket.emit("join-room", room);
+    }
+
+    socket.on("joined-success", (room) => {
+      roomStatus.innerText = "Joined Room: " + room;
+      alert("Joined Room: " + room);
+    });
+
+    function sendMessage() {
+      const msg = messageInput.value.trim();
+      if (!msg) return;
+
+      if (!roomId) {
+        alert("Please join a room first!");
+        return;
+      }
+
+      socket.emit("message", { room: roomId, msg });
+
+      const element = document.createElement("div");
+      element.textContent = "You: " + msg;
+      element.style.textAlign = "right";
+      messageBox.appendChild(element);
+
+      messageInput.value = "";
+    }
+
+    socket.on("new-message", (msg) => {
+      const element = document.createElement("div");
+      element.textContent = "Friend: " + msg;
+      element.style.textAlign = "left";
+      messageBox.appendChild(element);
+    });
+  </script>
+
+</body>
+</html>

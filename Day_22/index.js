@@ -3,7 +3,13 @@ const app = express();
 const database = require("./util/Mongodb");
 const cookieParser = require("cookie-parser");
 const userRouter = require("./router/user_router");
+const cors = require("cors");
 require("dotenv").config();
+
+app.use(cors({
+  origin: "http://localhost:5173",  // React Vite URL
+  credentials: true
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

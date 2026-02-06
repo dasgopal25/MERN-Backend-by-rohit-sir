@@ -1,5 +1,6 @@
 const validator = require("validator");
 const User = require("../model/user_model");
+const RedisClient = require("../util/redis");
 
 async function registerV(data) {
   const mandatoryInfo = ["fullname", "email", "gender", "password"];
@@ -41,4 +42,25 @@ const isComplete = mandatoryInfo.every(k =>
 
 }
 
-module.exports = {registerV,loginV};
+const rateLimiter = async (req,res,next) => {
+  try {
+    const ip = req.ip;
+    const count = await RedisClient.incr(ip);
+
+    if(count>60){
+      throw new Error("User Limit Exceeded");
+    }
+
+    if(count == 1){
+      await RedisClient.expire(3600);
+    }
+
+    next();
+
+  } catch (error) {
+    res.status(404).send(error.message);
+  }
+}
+
+
+module.exports = {registerV,loginV,rateLimiter};

@@ -6,6 +6,7 @@ const main = require("./config/db");
 const redisclient = require('./config/redis')
 const Authrouter = require('./router/userRouter');
 const problemrouter = require('./router/problemRouter');
+const submitRouter = require('./router/submitRouter');
 
 
 //middleware
@@ -15,6 +16,7 @@ app.use(cookie_parser());
 //API code
 app.use("/user",Authrouter)
 app.use("/problem",problemrouter)
+app.use("/submit",submitRouter);
 
 
 
@@ -29,7 +31,7 @@ const InitlizeConnection = async ()=>{
     })
     }
     catch(err){
-        console.log("Error: "+err);
+        console.log("Error: "+err.message);
     }
 };
 

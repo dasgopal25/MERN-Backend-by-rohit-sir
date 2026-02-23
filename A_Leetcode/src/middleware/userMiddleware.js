@@ -3,33 +3,30 @@ const User = require('../models/user');
 const redisclient = require('../config/redis');
 
 const userMiddle = async (req, res, next) => {
-
   try {
     const { token } = req.cookies;
     if (!token)
-      throw new Error("Cookie not present");
+      return res.status(401).send("Cookie not present");
 
     const payload = JWT.verify(token, process.env.JWT_KEY);
     const { _id } = payload;
     if (!_id)
-      throw new Error("Id is missing");
+      return res.status(401).send("Id is missing");
 
     const result = await User.findById(_id);
     if (!result)
-      throw new Error("User Doesn't exist");
-    
-    const IsBlocked = await redisclient.exists(`token:${token}`);
+      return res.status(401).send("User doesn't exist");
 
-    if (IsBlocked)
-      throw new Error("Invaild Token");
+    const isBlocked = await redisclient.exists(`token:${token}`);
+    if (isBlocked)
+      return res.status(401).send("Invalid Token");
 
     req.result = result;
-    next();
+    return next(); 
 
+  } catch (err) {
+    return res.status(401).send("Error: " + err.message);
   }
-  catch (err) {
-    res.status(401).send("Error: " + err.message);
-  }
-}
+};
 
 module.exports = userMiddle;

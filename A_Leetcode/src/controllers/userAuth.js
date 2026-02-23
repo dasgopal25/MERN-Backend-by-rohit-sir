@@ -1,4 +1,5 @@
 const redisclient = require('../config/redis');
+const Submission = require('../models/submisssion');
 const User = require('../models/user')
 const validation = require('../validator/userAuthen');
 const bcrypt = require('bcrypt');
@@ -89,4 +90,34 @@ const logout = async (req,res)=>{
  }
 }
 
-module.exports = { register,adminRegister,login,logout};
+const profiledelete = async (req,res)=>{
+    try{
+        const userId = req.result._id;
+        //userSchema delete
+        await User.findByIdAndDelete(userId);
+        //submission se bhi delete karo ...
+        //await Submission.deleteMany({userId});
+        res.status(200).send("Deleted successfully");
+    }
+    catch(err){
+        res.status(500).send("profile delete Error: "+err.message);
+    }
+}
+
+const getProfile = async (req,res)=>{
+    try {
+        const userId = req.result._id;
+        if(!userId){
+            return res.stastu(401).send("User not present");
+        }
+        const userprofile = await User.findById(userId).select('_id firstName lastName email age solvedProblems');
+        if(!userprofile){
+            return res.status(401).send("User not exits");
+        }
+        res.status(201).send(userprofile);
+    } catch (error) {
+        res.status(500).send("Get profile Error: "+error.message);
+    }
+}
+
+module.exports = { register,adminRegister,login,logout,profiledelete,getProfile};
